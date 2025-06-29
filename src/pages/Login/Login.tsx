@@ -2,9 +2,11 @@
 import {Alert, Button, Card, Checkbox, Flex, Form, Input, Layout, Space} from "antd"
 import {LockFilled, LockOutlined, UserOutlined} from "@ant-design/icons"
 import Logo from "../../components/icons/Logo"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import type { Credentials } from "../../types"
-import { login } from "../../http/Api"
+import { login, self,logout } from "../../http/Api"
+import { useAuthStore } from "../../Store"
+import { UsePermission } from "../../hooks/UserPermission"
 
 const loginUser=async(credentials:Credentials)=>{
     //server call logic
@@ -12,14 +14,54 @@ const loginUser=async(credentials:Credentials)=>{
     return data
 }
 
+const getSelf=async()=>{
+  const{data}=await self()
+  console.log("data",data)
+  return data
+}
+
 const LoginPage = () => {
-  const {mutate,isPending,isError,error}=useMutation({
-    mutationKey:["login"],
-    mutationFn:loginUser,
-    onSuccess:async()=>{
-      console.log("login successfull")
+  const {isAllowed}=UsePermission()
+  const {setUser,logout:logoutFromStore}=useAuthStore()//Store
+
+  const {refetch} = useQuery({
+  queryKey: ["self"],
+  queryFn: getSelf,
+  enabled: false
+});
+
+const {mutate:logoutMutate}=useMutation({
+  mutationKey: ["logout"],
+  mutationFn: logout,
+  onSuccess:async()=>{
+    logoutFromStore()
+    return
+  }
+  
+})
+const {mutate, isPending, isError, error} = useMutation({
+  mutationKey: ["login"],
+  mutationFn: loginUser,
+  onSuccess: async () => {
+    const selfDataPromise = await refetch();  // Get fresh user data
+    console.log("UserData", selfDataPromise.data);  // Correct place to access new user data
+    //logout 
+    if(!isAllowed(selfDataPromise.data)){
+      logoutMutate()
+      logoutFromStore()
+      return
     }
-  })
+    // if(selfDataPromise.data.role==="customer"){
+    //   await logout()
+    //   logoutFromStore()
+    //   return
+    // }
+
+    setUser(selfDataPromise.data)
+    
+    
+  }
+});
 
   return(
     <>
