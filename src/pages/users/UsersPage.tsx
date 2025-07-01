@@ -1,9 +1,48 @@
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Space, Table } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { getUsers } from "../../http/Api";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "../../types";
+
+//This column is taken from table component go to ant design and verify
+const columnsData=[
+   {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+    },
+    {
+        title: 'Name',
+        dataIndex: 'firstName',
+        key: 'firstName',
+        render: (_text: string, record: User) => {
+            return (
+                <div>
+                    {record.firstName} {record.lastName}
+                </div>
+            );
+        },
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+    },
+    {
+        title: 'Role',
+        dataIndex: 'role',
+        key: 'role',
+    },
+    {
+        title: 'Restaurant',
+        dataIndex: 'tenant',
+        key: 'tenant',
+        render: (_text: string, record: User) => {
+            return <div>{record.tenant?.name}</div>;
+        },
+    },
+]
 
 const UsersPage = () => {
   const { data: users, isLoading, isError, error } = useQuery({
@@ -19,7 +58,8 @@ const UsersPage = () => {
   
   return (
     <>
-      <Breadcrumb
+    <Space direction="vertical" size="large" style={{width:"100%"}}>
+          <Breadcrumb
         separator={<RightOutlined />}
         items={[
           { title: <Link to="/">Dashboard</Link> },
@@ -28,17 +68,11 @@ const UsersPage = () => {
       />
       {isLoading && <div>Loading...</div>}
       {isError && <div>{(error as Error).message}</div>}
-
-      {Array.isArray(users) && (
-        <div>
-          <h1>Users</h1>
-          <ul>
-            {users.map((user: User) => (
-              <li key={user.id}>{user.firstName}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      
+      <Table  columns={columnsData} dataSource={users}/>
+    </Space>
+      
+      
     </>
   );
 };
