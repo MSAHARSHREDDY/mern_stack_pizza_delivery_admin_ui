@@ -28,6 +28,7 @@ import UserIcon from "../components/icons/UserIcon";
 import { useMutation } from "@tanstack/react-query";
 import { logout } from "../http/Api";
 
+
 const baseItems = [
   {
     key: "/",
@@ -47,14 +48,14 @@ const baseItems = [
 
   {
     key: "/products",
-    icon: <Icon component={foodIcon} />,
+    icon: <Icon component={BasketIcon} />,
     label: <NavLink to="/products">Products</NavLink>,
   },
-  {
-    key: "/orders",
-    icon: <Icon component={BasketIcon} />,
-    label: <NavLink to="/orders">Orders</NavLink>,
-  },
+  // {
+  //   key: "/orders",
+  //   icon: <Icon component={BasketIcon} />,
+  //   label: <NavLink to="/orders">Orders</NavLink>,
+  // },
   {
     key: "/promos",
     icon: <Icon component={GiftIcon} />,
@@ -65,6 +66,7 @@ const baseItems = [
 
 
 const Dashboard = () => {
+  
     const {logout:logoutFromStore}=useAuthStore()
     const { mutate: logoutMutate } = useMutation({
         mutationKey: ['logout'],
@@ -114,7 +116,7 @@ const Dashboard = () => {
             }}
           >
             <Flex gap="middle" align="start" justify="space-between">
-              <Badge text="Global" status="success"></Badge>
+              <Badge text={user.role==="admin"? "You are an admin":user.tenant?.name} status="success"></Badge>
 
               <Space size={16}>
                 <Badge dot={true}>
@@ -145,7 +147,7 @@ const Dashboard = () => {
             </Flex>
           </Header>
 
-          <Content style={{ margin: "0 16px" }}>
+          <Content style={{ margin: "24px" }}>
             <Outlet />
             {/*  The <Outlet> in the parent route component acts as the injection point for the elements of its child routes. */}
           </Content>
