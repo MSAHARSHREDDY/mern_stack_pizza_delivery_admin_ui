@@ -13,7 +13,7 @@ const Dashboard = () => {
     <div>
          
         <h1>Dashboard Component</h1>
-        <Outlet/>
+        <Outlet/>{/*  The <Outlet> in the parent route component acts as the injection point for the elements of its child routes. */}
        
         
         

@@ -5,3 +5,4 @@ import { api } from "./Client";
 export const login=(crendentials:Credentials)=>api.post("/auth/login",crendentials)
 export const self=()=>api.get("/auth/self")
 export const logout=()=>api.post("/auth/logout")
+
