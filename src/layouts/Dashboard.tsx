@@ -3,20 +3,19 @@ import { useAuthStore } from "../Store";
 import {
   Avatar,
   Badge,
-  Button,
+ 
   Dropdown,
   Flex,
   Layout,
   Menu,
-  Segmented,
+
   Space,
   theme,
 } from "antd";
 const { Header, Content, Footer, Sider } = Layout;
 import Icon, {
   BellFilled,
-  HomeOutlined,
-  UserOutlined,
+  
 } from "@ant-design/icons";
 import { useState } from "react";
 import Logo from "../components/icons/Logo";
