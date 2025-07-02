@@ -1,9 +1,11 @@
 import { Breadcrumb, Space, Table } from "antd";
 import { RightOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getUsers } from "../../http/Api";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "../../types";
+import { useAuthStore } from "../../Store";
+import UsersFilter from "./UsersFilter";
 
 //This column is taken from table component go to ant design and verify
 const columnsData=[
@@ -45,6 +47,7 @@ const columnsData=[
 ]
 
 const UsersPage = () => {
+ 
   const { data: users, isLoading, isError, error } = useQuery({
     queryKey: ["users"],
     queryFn: () => {
@@ -55,6 +58,11 @@ const UsersPage = () => {
       });
     },
   });
+
+  const {user}=useAuthStore()
+  if(user?.role!=="admin"){//we are providing protecting routes from url is user is not a admin, if user is not admin it tries to redirect to the 
+    return <Navigate to="/" replace={true}></Navigate>
+  }
   
   return (
     <>
@@ -68,6 +76,8 @@ const UsersPage = () => {
       />
       {isLoading && <div>Loading...</div>}
       {isError && <div>{(error as Error).message}</div>}
+
+      <UsersFilter/>
       
       <Table  columns={columnsData} dataSource={users}/>
     </Space>

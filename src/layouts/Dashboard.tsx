@@ -3,20 +3,15 @@ import { useAuthStore } from "../Store";
 import {
   Avatar,
   Badge,
- 
   Dropdown,
   Flex,
   Layout,
   Menu,
-
   Space,
   theme,
 } from "antd";
 const { Header, Content, Footer, Sider } = Layout;
-import Icon, {
-  BellFilled,
-  
-} from "@ant-design/icons";
+import Icon, { BellFilled } from "@ant-design/icons";
 import { useState } from "react";
 import Logo from "../components/icons/Logo";
 import Home from "../components/icons/Home";
@@ -27,55 +22,63 @@ import UserIcon from "../components/icons/UserIcon";
 import { useMutation } from "@tanstack/react-query";
 import { logout } from "../http/Api";
 
+const getMenuItems = (role: string) => {
+  
 
-const baseItems = [
-  {
-    key: "/",
-    icon: <Icon component={Home} />,
-    label: <NavLink to="/">Home</NavLink>,
-  },
-  {
-    key: "/users",
-    icon: <Icon component={UserIcon} />,
-    label: <NavLink to="/users">Users</NavLink>,
-  },
-  {
-    key: "/restaurants",
-    icon: <Icon component={foodIcon} />,
-    label: <NavLink to="/restaurants">Restaurants</NavLink>,
-  },
+  const baseItems = [//If an manager is going to login it is going to display this one
+    {
+      key: "/",
+      icon: <Icon component={Home} />,
+      label: <NavLink to="/">Home</NavLink>,
+    },
+    {
+      key: "/restaurants",
+      icon: <Icon component={foodIcon} />,
+      label: <NavLink to="/restaurants">Restaurants</NavLink>,
+    },
 
-  {
-    key: "/products",
-    icon: <Icon component={BasketIcon} />,
-    label: <NavLink to="/products">Products</NavLink>,
-  },
-  // {
-  //   key: "/orders",
-  //   icon: <Icon component={BasketIcon} />,
-  //   label: <NavLink to="/orders">Orders</NavLink>,
-  // },
-  {
-    key: "/promos",
-    icon: <Icon component={GiftIcon} />,
-    label: <NavLink to="/promos">Promos</NavLink>,
-  },
-];
+    {
+      key: "/products",
+      icon: <Icon component={BasketIcon} />,
+      label: <NavLink to="/products">Products</NavLink>,
+    },
+    // {
+    //   key: "/orders",
+    //   icon: <Icon component={BasketIcon} />,
+    //   label: <NavLink to="/orders">Orders</NavLink>,
+    // },
+    {
+      key: "/promos",
+      icon: <Icon component={GiftIcon} />,
+      label: <NavLink to="/promos">Promos</NavLink>,
+    },
+  ];
+
+  if (role === "admin") {//If role is an admin it is going to display including users
+    const menus= [...baseItems]
+    menus.splice(1,0,   {
+        key: "/users",
+        icon: <Icon component={UserIcon} />,
+        label: <NavLink to="/users">Users</NavLink>,
+      })
+      return menus
+    }
+  return baseItems
+};
 
 
 
 const Dashboard = () => {
-  
-    const {logout:logoutFromStore}=useAuthStore()
-    const { mutate: logoutMutate } = useMutation({
-        mutationKey: ['logout'],
-        mutationFn: logout,
-        onSuccess: async () => {
-            logoutFromStore();
-            return;
-        },
-    });
-    
+  const { logout: logoutFromStore } = useAuthStore();
+  const { mutate: logoutMutate } = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: logout,
+    onSuccess: async () => {
+      logoutFromStore();
+      return;
+    },
+  });
+
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -87,6 +90,9 @@ const Dashboard = () => {
     //If user is not logged in
     return <Navigate to={"/auth/login"} replace={true} />;
   }
+
+  const items=getMenuItems(user.role)//calling getMenuItems
+
   return (
     <div>
       <Layout style={{ minHeight: "100vh" }}>
@@ -103,7 +109,7 @@ const Dashboard = () => {
             theme="light"
             defaultSelectedKeys={["/"]}
             mode="inline"
-            items={baseItems}
+            items={items}
           />
         </Sider>
         <Layout>
@@ -115,7 +121,12 @@ const Dashboard = () => {
             }}
           >
             <Flex gap="middle" align="start" justify="space-between">
-              <Badge text={user.role==="admin"? "You are an admin":user.tenant?.name} status="success"></Badge>
+              <Badge
+                text={
+                  user.role === "admin" ? "You are an admin" : user.tenant?.name
+                }
+                status="success"
+              ></Badge>
 
               <Space size={16}>
                 <Badge dot={true}>
