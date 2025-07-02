@@ -1,8 +1,10 @@
 import { Button, Card, Col, Input, Row, Select } from "antd";
-
 import {PlusOutlined} from "@ant-design/icons"
 
-const UsersFilter = () => {
+type UsersFilterProps={
+  onFilterChange:(filterName:string,filterValue:string)=>void
+}
+const UsersFilter = ({onFilterChange}:UsersFilterProps) => {
   return (
     <>
       <Card>
@@ -10,18 +12,21 @@ const UsersFilter = () => {
 
           <Col span={16}>
             <Row gutter={20}>
+
               <Col span={8}>
-              <Input.Search placeholder="Search"/>
+              <Input.Search placeholder="Search" allowClear={true} onChange={(e)=>onFilterChange("SearchFilter",e.target.value)}/>
               </Col>
+
               <Col span={8}>
-               <Select style={{width:"100%"}} allowClear={true} placeholder="select role">
+               <Select style={{width:"100%"}} allowClear={true} placeholder="select role" onChange={(selectedItem)=>onFilterChange("roleFilter",selectedItem)}>
                   <Select.Option value="admin">Admin</Select.Option>
                   <Select.Option value="manager">Manager</Select.Option>
                   <Select.Option value="customer">Customer</Select.Option>
                </Select>
               </Col>
+              
               <Col span={8}>
-                <Select style={{width:"100%"}} allowClear={true} placeholder="status">
+                <Select style={{width:"100%"}} allowClear={true} placeholder="status" onChange={(selectedItem)=>onFilterChange("statusFilter",selectedItem)}>
                   <Select.Option value="ban">Ban</Select.Option>
                   <Select.Option value="active">Active</Select.Option>
                </Select>
