@@ -1,4 +1,4 @@
-import { Breadcrumb, Space, Table } from "antd";
+import { Breadcrumb, Button, Drawer, Form, Space, Table, theme } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import { Link, Navigate } from "react-router-dom";
 import { getUsers } from "../../http/Api";
@@ -6,6 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { User } from "../../types";
 import { useAuthStore } from "../../Store";
 import UsersFilter from "./UsersFilter";
+import {PlusOutlined} from "@ant-design/icons"
+import { useState } from "react";
+import UserForm from "./forms/UserForm";
+import React from "react";
 
 //This column is taken from table component go to ant design and verify
 const columnsData=[
@@ -47,7 +51,12 @@ const columnsData=[
 ]
 
 const UsersPage = () => {
- 
+  
+  const [currentEditingUser, setCurrentEditingUser] = React.useState<User | null>(null);
+  const{
+    token:{colorBgLayout},
+  }=theme.useToken()
+  const [drawerOpen,setDrawerOpen]=useState(false)
   const { data: users, isLoading, isError, error } = useQuery({
     queryKey: ["users"],
     queryFn: () => {
@@ -60,7 +69,7 @@ const UsersPage = () => {
   });
 
   const {user}=useAuthStore()
-  if(user?.role!=="admin"){//we are providing protecting routes from url is user is not a admin, if user is not admin it tries to redirect to the 
+  if(user?.role!=="admin"){//we are providing protecting routes from url is user is not a admin, if user is not admin it tries to redirect to the home page
     return <Navigate to="/" replace={true}></Navigate>
   }
   
@@ -76,13 +85,36 @@ const UsersPage = () => {
       />
       {isLoading && <div>Loading...</div>}
       {isError && <div>{(error as Error).message}</div>}
-
+        
+      {/**It is used for filtering out the data from table */}
       <UsersFilter onFilterChange={(filterName:string,filterValue:string)=>{
               console.log("filterName",filterName)
               console.log("filterValue",filterValue)
-      }}/>
+      }}>
+        <Button type="primary" icon={<PlusOutlined/>} onClick={()=>setDrawerOpen(true)}>Add User</Button>
+        {/**It is a component for search,role,status*/}
+      </UsersFilter>
 
+      {/**It is used for to display tables  */}
       <Table  columns={columnsData} dataSource={users} rowKey={"id"}/>
+
+      {/**It is used for displaying drawer */}
+      <Drawer title="Create User" styles={{body:{background:colorBgLayout}}} width={720} destroyOnClose={true} open={drawerOpen} onClose={()=>{
+        setDrawerOpen(false)
+        console.log("closing")
+      }} extra={
+        <Space>
+            <Button>Cancel</Button>
+            <Button type="primary">Submit</Button>
+        </Space>
+      }>
+        {/**Creating a user formcomponent */}
+        <Form layout="vertical">
+          <UserForm isEditMode={!!currentEditingUser} />
+        </Form>
+        
+      </Drawer>
+
     </Space>
       
       
