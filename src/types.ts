@@ -78,6 +78,8 @@ export type Product = {
 export type ImageField = { file: File };
 export type CreateProductData = Product & { image: ImageField };
 
+
+
 // export enum OrderStatus {
 //     RECEIVED = 'received',
 //     CONFIRMED = 'confirmed',
@@ -143,3 +145,5 @@ export interface Customer {
 //     PAYMENT_STATUS_UPDATE = 'PAYMENT_STATUS_UPDATE',
 //     ORDER_STATUS_UPDATE = 'ORDER_STATUS_UPDATE',
 // }
+
+
