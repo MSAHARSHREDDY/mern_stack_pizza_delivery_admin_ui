@@ -1,7 +1,18 @@
 import { Card, Col, Form, Input, Row, Select, Space } from 'antd'
+import { getTenants } from '../../../http/Api';
+import { useQuery } from '@tanstack/react-query';
+import type { Tenant } from '../../../types';
 
 const UserForm = ({ isEditMode = false }: { isEditMode: boolean }) => {
 const selectedRole = Form.useWatch('role');
+const { data: tenants } = useQuery({
+        queryKey: ['tenants'],
+        queryFn: () => {
+            // TODO: make this dynamic, like search for tenants in the input
+            return getTenants().then((res) => res.data);
+        },
+    });
+
   return (
     <>
         <Row>
@@ -102,7 +113,7 @@ const selectedRole = Form.useWatch('role');
                                     </Select>
                                 </Form.Item>
                             </Col>
-                            {selectedRole === 'manager' && (
+                           
                                 <Col span={12}>
                                     <Form.Item
                                         label="Restaurant"
@@ -119,18 +130,18 @@ const selectedRole = Form.useWatch('role');
                                             allowClear={true}
                                             onChange={() => {}}
                                             placeholder="Select restaurant">
-                                            {/* {tenants?.data.map((tenant: Tenant) => (
+                                            {tenants?.data.map((tenant: Tenant) => (
                                                 <Select.Option value={tenant.id} key={tenant.id}>
                                                     {tenant.name}
                                                 </Select.Option>
-                                            ))} */}
+                                            ))}
                                         </Select>
                                     </Form.Item>
                                 </Col>
-                            )}
+                            
                         </Row>
                     </Card>
-                    
+
                 </Space>
             </Col>
         </Row>
