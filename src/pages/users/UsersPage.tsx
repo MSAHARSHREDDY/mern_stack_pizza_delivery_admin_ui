@@ -257,7 +257,7 @@ const UsersPage = () => {
             ).toString();
             return getUsers(queryString).then((res) => res.data);
         },
-        placeholderData: keepPreviousData,
+        placeholderData: keepPreviousData,//It is feature from react query where,it is going to wait until new data is going to fetch
     });
 
     const { user } = useAuthStore();
