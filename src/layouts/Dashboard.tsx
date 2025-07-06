@@ -1,4 +1,4 @@
-import { Navigate, NavLink, Outlet } from "react-router-dom";
+import { Navigate, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "../Store";
 import {
   Avatar,
@@ -70,6 +70,7 @@ const getMenuItems = (role: string) => {
 
 
 const Dashboard = () => {
+  const location=useLocation()
   const { logout: logoutFromStore } = useAuthStore();
   const { mutate: logoutMutate } = useMutation({
     mutationKey: ["logout"],
@@ -89,7 +90,8 @@ const Dashboard = () => {
   console.log("user", user);
   if (user === null) {
     //If user is not logged in
-    return <Navigate to={"/auth/login"} replace={true} />;
+    //When u refrresh the page, the window need to be in same page
+    return <Navigate to={`/auth/login?returnTo=${location.pathname}`} replace={true} />;
   }
 
   const items=getMenuItems(user.role)//calling getMenuItems
@@ -108,7 +110,7 @@ const Dashboard = () => {
           </div>
           <Menu
             theme="light"
-            defaultSelectedKeys={["/"]}
+            defaultSelectedKeys={[location.pathname]}
             mode="inline"
             items={items}
           />

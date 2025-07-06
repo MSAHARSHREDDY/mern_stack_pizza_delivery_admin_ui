@@ -257,7 +257,7 @@ const UsersPage = () => {
             ).toString();
             return getUsers(queryString).then((res) => res.data);
         },
-        placeholderData: keepPreviousData,//It is feature from react query where,it is going to wait until new data is going to fetch
+        placeholderData: keepPreviousData,//It is feature from react query where,it is going to wait until new data is going to fetch from database
     });
 
     const { user } = useAuthStore();
@@ -301,6 +301,7 @@ const UsersPage = () => {
     }, []);
 
     const onFilterChange = (changedFields: FieldData[]) => {
+      console.log("changedFields",changedFields)
         const changedFilterFields = changedFields
             .map((item) => ({
                 [item.name[0]]: item.value,
@@ -308,7 +309,7 @@ const UsersPage = () => {
             .reduce((acc, item) => ({ ...acc, ...item }), {});
 
         if ('q' in changedFilterFields) {
-            debouncedQUpdate(changedFilterFields.q);
+            debouncedQUpdate(changedFilterFields.q);//it is used to wait until your search is completed in input, then it sends to backend api
         } else {
             setQueryParams((prev) => ({ ...prev, ...changedFilterFields, currentPage: 1 }));
         }
@@ -332,7 +333,7 @@ const UsersPage = () => {
                     {isError && <Typography.Text type="danger">{error.message}</Typography.Text>}
                 </Flex>
 
-                <Form form={filterForm} onFieldsChange={onFilterChange}>
+                <Form form={filterForm} onFieldsChange={onFilterChange}>{/**By using this form in userFilter how many form attributes are there it is going to fetch */}
                     <UsersFilter>
                         <Button
                             type="primary"
