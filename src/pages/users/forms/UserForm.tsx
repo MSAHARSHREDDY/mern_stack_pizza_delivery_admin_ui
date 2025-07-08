@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Tenant } from '../../../types';
 
 const UserForm = ({ isEditMode = false }: { isEditMode: boolean }) => {
-const selectedRole = Form.useWatch('role');
+const selectedRole = Form.useWatch('role');//here "role" is taken from name attribute from role line number 99
+console.log("seleted role",selectedRole)
 const { data: tenants } = useQuery({
         queryKey: ['tenants'],
         queryFn: () => {
@@ -116,7 +117,7 @@ const { data: tenants } = useQuery({
                                 </Form.Item>
                             </Col>
                            
-                               
+                            {/*If selected role is manager then only it is going to display*/}
                             {selectedRole === 'manager' && (
                                 <Col span={12}>
                                     <Form.Item
