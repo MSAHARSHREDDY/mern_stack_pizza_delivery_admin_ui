@@ -167,7 +167,7 @@ import {
 import { RightOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Link, Navigate } from 'react-router-dom';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createUser, getUsers,  } from "../../http/Api";
+import { createUser, getUsers, updateUser,  } from "../../http/Api";
 import type { CreateUserData, FieldData, User } from '../../types';
 import { useAuthStore } from '../../Store';
 import UsersFilter from './UsersFilter';
@@ -176,7 +176,7 @@ import UserForm from './forms/UserForm';
 import { PER_PAGE } from '../../Constants';
 import { debounce } from 'lodash';
 
-const columns = [
+const columnsData = [
     {
         title: 'ID',
         dataIndex: 'id',
@@ -232,6 +232,7 @@ const UsersPage = () => {
 
     const [drawerOpen, setDrawerOpen] = React.useState(false);
 
+    //It is used to run when on click on edit option in a table
     React.useEffect(() => {
         if (currentEditingUser) {
             console.log('currentEditingUser', currentEditingUser);
@@ -283,7 +284,7 @@ const UsersPage = () => {
 
     const onHandleSubmit = async () => {
         await form.validateFields();
-        const isEditMode = !!currentEditingUser;
+        const isEditMode = !!currentEditingUser;//it it is in editable
         if (isEditMode) {
             await updateUserMutation(form.getFieldsValue());
         } else {
@@ -347,7 +348,7 @@ const UsersPage = () => {
                 {/**It is used for to display tables  */}
                 <Table
                     columns={[
-                        ...columns,
+                        ...columnsData,
                         {
                             title: 'Actions',
                             render: (_: string, record: User) => {

@@ -9,3 +9,4 @@ export const getUsers=(queryString:string)=>api.get(`/users?${queryString}`)//He
 export const getTenants=(queryString:string)=>api.get(`/tenants?${queryString}`)//Here we are query string because we are using pagination in backend
 export const createUser=(user:CreateUserData)=>api.post("/users",user)
 export const createTenant=(tenant:CreateTenantData)=>api.post("/tenants",tenant)
+export const updateUser=(user:CreateUserData,id:string)=>api.patch(`/users/${id}`,user)

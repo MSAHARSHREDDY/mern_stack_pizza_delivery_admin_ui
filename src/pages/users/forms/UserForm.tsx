@@ -8,8 +8,9 @@ const selectedRole = Form.useWatch('role');
 const { data: tenants } = useQuery({
         queryKey: ['tenants'],
         queryFn: () => {
-            // TODO: make this dynamic, like search for tenants in the input
-            return getTenants().then((res) => res.data);
+            
+           // TODO: make this dynamic, like search for tenants in the input
+            return getTenants(`perPage=100&currentPage=1`).then((res) => res.data);
         },
     });
 
@@ -68,7 +69,8 @@ const { data: tenants } = useQuery({
                             </Col>
                         </Row>
                     </Card>
-
+                    
+                    {/**When you click on edit option the password is going to hide */}
                     {!isEditMode && (
                         <Card title="Security info" bordered={false}>
                             <Row gutter={20}>
