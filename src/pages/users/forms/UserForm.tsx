@@ -116,6 +116,8 @@ const { data: tenants } = useQuery({
                                 </Form.Item>
                             </Col>
                            
+                               
+                            {selectedRole === 'manager' && (
                                 <Col span={12}>
                                     <Form.Item
                                         label="Restaurant"
@@ -140,6 +142,7 @@ const { data: tenants } = useQuery({
                                         </Select>
                                     </Form.Item>
                                 </Col>
+                            )}
                             
                         </Row>
                     </Card>

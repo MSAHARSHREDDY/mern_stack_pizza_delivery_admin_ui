@@ -1,4 +1,4 @@
-import type { CreateTenantData, CreateUserData, Credentials, Tenant, User } from "../types";
+import type { CreateTenantData, CreateUserData, Credentials,  } from "../types";
 import { api } from "./Client";
 
 //Auth service>
