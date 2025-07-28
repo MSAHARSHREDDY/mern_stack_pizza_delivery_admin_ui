@@ -17,3 +17,5 @@ export const updateTenant=(tenant:CreateTenantData,id:number)=>api.patch(`${AUTH
 
 //catalog service
 export const getCategories=()=>api.get(`${CATALOG_SERVICE}/categories`)
+export const getProducts = (queryParam: string) =>
+    api.get(`${CATALOG_SERVICE}/products?${queryParam}`);
