@@ -33,7 +33,7 @@ const columnsData = [
         title: 'Name',
         dataIndex: 'firstName',
         key: 'firstName',
-        render: (_text: string, record: User) => {
+        render: (_text: string, record: User) => {//here we are combining firstName and lastName
             return (
                 <div>
                     {record.firstName} {record.lastName}
@@ -62,7 +62,7 @@ const columnsData = [
 ];
 
 const UsersPage = () => {
-    const [form] = Form.useForm();
+    const [form]=Form.useForm()//This form is taken from ant design, and it is going to get complete user input values
     const [filterForm] = Form.useForm();
 
     const [currentEditingUser, setCurrentEditingUser] = React.useState<User | null>(null);
@@ -88,6 +88,7 @@ const UsersPage = () => {
         }
     }, [currentEditingUser, form]);
 
+    {/*Here we are going to fetch users from database*/}
     const {
         data: users,
         isFetching,
@@ -110,11 +111,12 @@ const UsersPage = () => {
 
     const { user } = useAuthStore();
 
+    //Here after form is submitted we are posting data to the backend
     const { mutate: userMutate } = useMutation({
         mutationKey: ['user'],
         mutationFn: async (data: CreateUserData) => createUser(data).then((res) => res.data),
         onSuccess: async () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+            queryClient.invalidateQueries({ queryKey: ['users'] });//again we need to fetch user data to display we need to write like this,so that it calls new user data
             return;
         },
     });
@@ -129,8 +131,9 @@ const UsersPage = () => {
         },
     });
 
+     //It is used for form submission taken from  input fields from user
     const onHandleSubmit = async () => {
-        await form.validateFields();
+        await form.validateFields();//validating input fields before submitting 
         const isEditMode = !!currentEditingUser;//it it is in editable
         if (isEditMode) {
             await updateUserMutation(form.getFieldsValue());
@@ -139,7 +142,7 @@ const UsersPage = () => {
         }
         form.resetFields();//once you submit it clear all the values
         setCurrentEditingUser(null);
-        setDrawerOpen(false);
+        setDrawerOpen(false);//we are closing the drawer after submitting
     };
 
     const debouncedQUpdate = React.useMemo(() => {
@@ -180,8 +183,10 @@ const UsersPage = () => {
                     )}
                     {isError && <Typography.Text type="danger">{error.message}</Typography.Text>}
                 </Flex>
-
-                <Form form={filterForm} onFieldsChange={onFilterChange}>{/**By using this form in userFilter how many form attributes are there it is going to fetch */}
+                
+                {/**By using this form in userFilter how many form attributes are there it is going to fetch */}
+                {/**It is used to filter out the data from table */}
+                <Form form={filterForm} onFieldsChange={onFilterChange}>
                     <UsersFilter>
                         <Button
                             type="primary"
@@ -192,7 +197,8 @@ const UsersPage = () => {
                     </UsersFilter>
                 </Form>
                   
-                {/**It is used for to display tables  */}
+
+                {/**It is used for to display tables and fetch userdata from database  */}
                 <Table
                     columns={[
                         ...columnsData,
@@ -213,7 +219,7 @@ const UsersPage = () => {
                             },
                         },
                     ]}
-                    dataSource={users?.data}
+                    dataSource={users?.data}//Here we are going to get the users table values from backend
                     rowKey={'id'}
                     pagination={{
                         total: users?.total,
@@ -234,6 +240,7 @@ const UsersPage = () => {
                         },
                     }}
                 />
+
 
                 {/**It is used for displaying Drawer  */}
                 <Drawer
@@ -261,9 +268,11 @@ const UsersPage = () => {
                             </Button>
                         </Space>
                     }>
+                    {/**It is used for displaying user form */}
                     <Form layout="vertical" form={form}>
                         <UserForm isEditMode={!!currentEditingUser} />
                     </Form>
+
                 </Drawer>
             </Space>
         </>

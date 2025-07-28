@@ -11,11 +11,12 @@ export interface User{
 }
 
 interface AuthState {
-    user:null | User
+    user:null | User //if user is null then that user is loggedout
     setUser:(user:User)=>void
     logout:()=>void
 }
 
+//setuping the store
 export const useAuthStore=create<AuthState>()(devtools((set)=>({
     user:null,
     setUser:(user)=>set({user}),

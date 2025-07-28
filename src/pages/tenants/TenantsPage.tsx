@@ -101,12 +101,14 @@ const TenantsPage = () => {
   const { user } = useAuthStore();
 
   const queryClient = useQueryClient();
+
+  //Here after form is submitted we are posting data to the backend
   const { mutate: tenantMutate } = useMutation({
     mutationKey: ["tenant"],
     mutationFn: async (data: CreateTenantData) =>
       createTenant(data).then((res) => res.data),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["tenants"] });
+      queryClient.invalidateQueries({ queryKey: ["tenants"] });//again we need to fetch tenant data to display new data we need to write like this,so that it calls new tenant data
       return;
     },
   });
@@ -121,6 +123,7 @@ const TenantsPage = () => {
           },
       });
 
+      //when you click on submit it calls this function,It is used for form submission for input fields from tenant
    const onHandleSubmit = async () => {
         await form.validateFields();
         const isEditMode = !!currentEditingTenant;//it it is in editable
@@ -131,7 +134,7 @@ const TenantsPage = () => {
         }
         form.resetFields();//once you submit it clear all the values
         setCurrentEditingTenant(null);
-        setDrawerOpen(false);
+        setDrawerOpen(false);//It closes drawer once form is submitted
     };
 
 

@@ -13,6 +13,14 @@ const { data: tenants } = useQuery({
            // TODO: make this dynamic, like search for tenants in the input
             return getTenants(`perPage=100&currentPage=1`).then((res) => res.data);
         },
+        /**
+         * You can also write like this also
+         * queryFn:async()=>{
+            const result=await getTenants(`perPage=100&currentPage=1`)// Here we are calling getTenants from api.tsx
+            console.log("Tenants Data",result.data)
+            return result.data
+        }
+         */
     });
 
   return (

@@ -55,7 +55,7 @@ const getMenuItems = (role: string) => {
     menus.splice(1,0,   {
         key: "/users",
         icon: <Icon component={UserIcon} />,
-        label: <NavLink to="/users">Users</NavLink>,
+        label: <NavLink to="/users">Users</NavLink>,//it is going to redirect to router.tsx "/users" route and render userspage
       })
       menus.splice(2, 0, {
             key: '/restaurants',
@@ -89,7 +89,7 @@ const Dashboard = () => {
   const { user } = useAuthStore();
   console.log("user", user);
   if (user === null) {
-    //If user is not logged in
+    //If user is not logged in we are trying to redirect to login page
     //When u refrresh the page, the window need to be in same page
     return <Navigate to={`/auth/login?returnTo=${location.pathname}`} replace={true} />;
   }
