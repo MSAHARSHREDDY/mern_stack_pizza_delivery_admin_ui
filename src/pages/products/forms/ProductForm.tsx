@@ -1,5 +1,5 @@
 import { Row, Col,type FormInstance, Space, Card, Form, Input, Select, Switch, Typography } from "antd"
-import form from "antd/es/form"
+
 import type { Category, Tenant } from "../../../types"
 import { getCategories, getTenants } from "../../../http/Api"
 import { useQuery } from "@tanstack/react-query"
@@ -131,8 +131,8 @@ const ProductForm = ({ form }: { form: FormInstance }) => {
                         </Card>
                     )}
 
-                    {selectedCategory && <Pricing />}
-                    {selectedCategory && <Attributes />}
+                     {selectedCategory && <Pricing selectedCategory={selectedCategory} />}
+                    {selectedCategory && <Attributes selectedCategory={selectedCategory} />}
 
                     <Card title="Other properties" bordered={false}>
                         <Row gutter={24}>
