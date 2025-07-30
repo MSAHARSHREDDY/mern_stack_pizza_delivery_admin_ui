@@ -146,12 +146,13 @@ const TenantsPage = () => {
   }, []);
 
   const onFilterChange = (changedFields: FieldData[]) => {
+     //console.log('changedFields', changedFields);
     const changedFilterFields = changedFields
       .map((item) => ({
         [item.name[0]]: item.value,
       }))
       .reduce((acc, item) => ({ ...acc, ...item }), {});
-
+ //console.log('changedFilterFields key and value', changedFilterFields);
     if ("q" in changedFilterFields) {
       debouncedQUpdate(changedFilterFields.q);
     } else {

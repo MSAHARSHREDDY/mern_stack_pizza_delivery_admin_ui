@@ -26,7 +26,7 @@ const ProductsFilter = ({ children }: ProductsFilterProps) => {
     const{data:categories}=useQuery({
         queryKey:['categories'],
         queryFn:()=>{
-            return getCategories();
+            return getCategories();//here we are calling the api
         }
     })
     //console.log("categories", categories);
