@@ -94,7 +94,7 @@ const ProductForm = ({ form }: { form: FormInstance }) => {
                     <Card title="Product image" bordered={false}>
                         <Row gutter={20}>
                             <Col span={12}>
-                                <ProductImage  />
+                                <ProductImage initialImage={form.getFieldValue('image')} />
                             </Col>
                         </Row>
                     </Card>

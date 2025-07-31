@@ -18,13 +18,15 @@ import { RightOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import type { FieldData, Product } from '../../types';
 import { Link } from 'react-router-dom';
 import ProductsFilter from './ProductsFilter';
-import { getProducts } from '../../http/Api';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { createProduct, getProducts, updateProduct } from '../../http/Api';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../Store';
 import React from 'react';
 import { PER_PAGE } from '../../Constants';
 import { debounce } from 'lodash';
 import ProductForm from './forms/ProductForm';
+import { makeFormData } from './helpers';
+
 
 const columns = [
     {
@@ -136,17 +138,33 @@ const ProductsPage = () => {
     };
 
     //It is used for edit and create a product
-    const {mutate:productMutate,isPending:isCreateLoading}=useMutation({
+    const queryClient = useQueryClient();
+    const { mutate: productMutate, isPending: isCreateLoading } = useMutation({
+        mutationKey: ['product'],
+        mutationFn: async (data: FormData) => {
+            if (selectedProduct) {
+                // edit mode
+                return updateProduct(data, selectedProduct._id).then((res) => res.data);
+            } else {
+                return createProduct(data).then((res) => res.data);
+            }
+        },
+        onSuccess: async () => {
+            queryClient.invalidateQueries({ queryKey: ['products'] });//Here we are updating the product after click on submit button
+            form.resetFields();
+            setDrawerOpen(false);
+            return;
+        },
+    });
 
-    })
-
+    //onHandleSubmit function is used to handle the form submission
     const onHandleSubmit = async () => {
-        // const dummy = {
+        // const backend_data = {
         //     Size: { priceType: 'base', availableOptions: { Small: 400, Medium: 600, Large: 800 } },
         //     Crust: { priceType: 'aditional', availableOptions: { Thin: 50, Thick: 100 } },
         // };
 
-        // const currentData = {
+        // const frontend_data = {
         //     '{"configurationKey":"Size","priceType":"base"}': {
         //         Small: 100,
         //         Medium: 200,
@@ -158,7 +176,59 @@ const ProductsPage = () => {
         //     },
         // };
 
-        
+        //Now we are going to convert the frontend_data to backend_data format
+
+        //console.log("form", form.getFieldsValue());
+        await form.validateFields();//here we are validating the form fields
+
+        const priceConfiguration = form.getFieldValue('priceConfiguration');
+        const pricing = Object.entries(priceConfiguration).reduce((acc, [key, value]) => {
+            //Here key is {"configurationKey":"Size","priceType":"base"}
+            //Here value is { Small: 100, Medium: 200, Large: 400 }
+            const parsedKey = JSON.parse(key);
+            return {
+                ...acc,
+                [parsedKey.configurationKey]: { //Here [parsedKey.configurationKey] we are getting "size" keeping [] meaning dynamically setting parsedKey.configurationKey value
+                    priceType: parsedKey.priceType,
+                    availableOptions: value,//Here value is { Small: 100, Medium: 200, Large: 400 }
+                },
+            };
+        }, {});
+
+        //console.log("pricing", pricing);
+        const categoryId = form.getFieldValue('categoryId');
+        // const backend_end_attributes = {
+        //     isHit: 'No',
+        //     Spiciness: 'Less',
+        // };
+
+        // const front_end_attributes = [
+        //     { name: 'Is Hit', value: true },
+        //     { name: 'Spiciness', value: 'Hot' },
+        // ];
+
+         //Now we are going to convert the front_end_attributes to backend_end_attributes format
+
+        const attributes = Object.entries(form.getFieldValue('attributes')).map(([key, value]) => {
+            return {
+                name: key,
+                value: value,
+            };
+        });
+        //console.log("attributes", attributes);
+        const postData = {
+            ...form.getFieldsValue(),
+            tenantId: user!.role === 'manager' ? user?.tenant?.id : form.getFieldValue('tenantId'),
+            isPublish: form.getFieldValue('isPublish') ? true : false,
+            image: form.getFieldValue('image'),
+            categoryId,
+            priceConfiguration: pricing,
+            attributes,
+        };
+
+        const formData = makeFormData(postData);//As in our backend we are sending data in form-data format you can look in to postmon, so we are using makeFormData function to convert the postData to form-data format
+        //console.log('formData', formData);
+        productMutate(formData);
     };
 
   return (
@@ -263,6 +333,10 @@ const ProductsPage = () => {
                         </Space>
                     }>
                         {/**It is used for displaying product form */}
+                        {/**
+                         <Form form={form}> tells AntD Form to use that form instance
+                        <ProductForm form={form} /> allows the child component to also access and interact with the same form
+                         */}
                     <Form layout="vertical" form={form}>
                         <ProductForm form={form} />
                     </Form>
