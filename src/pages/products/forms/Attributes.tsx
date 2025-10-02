@@ -15,7 +15,7 @@ const Attributes = ({ selectedCategory }: PricingProps) => {
         queryFn: () => {
             return getCategory(selectedCategory).then((res) => res.data);
         },
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 5, // 5 minutes It is used for caching the data
     });
     // You can log fetchedCategory here if needed
     //object.entries returns key-value pairs of an object

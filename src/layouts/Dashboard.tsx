@@ -35,19 +35,19 @@ const getMenuItems = (role: string) => {
 
     {
       key: "/products",
-      icon: <Icon component={BasketIcon} />,
+      icon: <Icon component={foodIcon} />,
       label: <NavLink to="/products">Products</NavLink>,
     },
-    // {
-    //   key: "/orders",
-    //   icon: <Icon component={BasketIcon} />,
-    //   label: <NavLink to="/orders">Orders</NavLink>,
-    // },
     {
-      key: "/promos",
-      icon: <Icon component={GiftIcon} />,
-      label: <NavLink to="/promos">Promos</NavLink>,
+      key: "/orders",
+      icon: <Icon component={BasketIcon} />,
+      label: <NavLink to="/orders">Orders</NavLink>,
     },
+    // {
+    //   key: "/promos",
+    //   icon: <Icon component={GiftIcon} />,
+    //   label: <NavLink to="/promos">Promos</NavLink>,
+    // },
   ];
 
   if (role === "admin") {//If role is an admin it is going to display including users

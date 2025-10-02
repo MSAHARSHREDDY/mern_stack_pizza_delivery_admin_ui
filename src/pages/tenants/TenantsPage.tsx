@@ -26,7 +26,7 @@ import {
 import { useAuthStore } from "../../Store";
 import React from "react";
 import TenantFilter from "./TenantsFilter";
-import { createTenant, getTenants, updateTenant, } from "../../http/Api";
+import { createTenant, getTenants, updateTenant, deleteTenant } from "../../http/Api";
 import TenantForm from "./forms/TenantForm";
 import type { CreateTenantData, FieldData, Tenant } from "../../types";
 import { PER_PAGE } from "../../Constants";
@@ -113,6 +113,7 @@ const TenantsPage = () => {
     },
   });
 
+  //Here you are updating the tenant data
    const { mutate: updateTenantMutation } = useMutation({
           mutationKey: ['update-tenant'],
           mutationFn: async (data: CreateTenantData) =>
@@ -122,6 +123,17 @@ const TenantsPage = () => {
               return;
           },
       });
+
+    // Mutation for deleting a tenant
+    const { mutate: deleteTenantMutation } = useMutation({
+      mutationKey: ['delete-tenant'],
+      mutationFn: async (id: string | number) =>
+        deleteTenant(String(id)).then((res) => res.data),
+      onSuccess: async () => {
+        queryClient.invalidateQueries({ queryKey: ['tenants'] });
+        return;
+      },
+    });
 
       //when you click on submit it calls this function,It is used for form submission for input fields from tenant
    const onHandleSubmit = async () => {
@@ -208,11 +220,23 @@ const TenantsPage = () => {
                   <Space>
                     <Button
                       type="link"
+                      style={{ color: "#1677ff" }} // You can change this hex code to your preferred color
                       onClick={() => {
                         setCurrentEditingTenant(record);
                       }}
                     >
                       Edit
+                    </Button>
+                    <Button
+                      danger
+                      onClick={() => {
+                        // Show confirmation before deleting
+                        if (window.confirm("Are you sure you want to delete this tenant?")) {
+                          deleteTenantMutation(record.id);
+                        }
+                      }}
+                    >
+                      Delete
                     </Button>
                   </Space>
                 );

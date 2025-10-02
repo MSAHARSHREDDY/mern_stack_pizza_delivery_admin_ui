@@ -8,6 +8,8 @@ import Root from "./layouts/Root";
 import UsersPage from "./pages/users/UsersPage";
 import TenantPage from "./pages/tenants/TenantsPage"
 import Products from "./pages/products/ProductsPage";
+import OrdersPage from "./pages/orders/OrdersPage";
+import SingleOrder from "./pages/orders/SingleOrder";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ export const router = createBrowserRouter([
           {
             path: "/products",
             element: <Products/>
+          },
+          {
+            path: "/orders",
+            element: <OrdersPage/>
+          },
+           {
+            path: "/orders/:orderId",
+            element: <SingleOrder/>
           },
         ],
       },

@@ -80,6 +80,45 @@ const ProductsPage = () => {
     const [filterForm] = Form.useForm();
     const [selectedProduct, setCurrentProduct] = React.useState<Product | null>(null);
 
+    //It is used for when you click on edit button
+    React.useEffect(() => {
+        if (selectedProduct) {
+            setDrawerOpen(true);
+
+            //console.log('seletedProduct', selectedProduct);
+
+            const priceConfiguration = Object.entries(selectedProduct.priceConfiguration).reduce(
+                (acc, [key, value]) => {
+                    const stringifiedKey = JSON.stringify({
+                        configurationKey: key,
+                        priceType: value.priceType,
+                    });
+
+                    return {
+                        ...acc,
+                        [stringifiedKey]: value.availableOptions,
+                    };
+                },
+                {}
+            );
+
+            const attributes = selectedProduct.attributes.reduce((acc, item) => {
+                return {
+                    ...acc,
+                    [item.name]: item.value,
+                };
+            }, {});
+
+            form.setFieldsValue({
+                ...selectedProduct,
+                priceConfiguration,
+                attributes,
+                // todo: fix this
+                categoryId: selectedProduct.category._id,
+            });
+        }
+    }, [selectedProduct, form]);
+
      const { user } = useAuthStore();
 
     const {
@@ -275,6 +314,27 @@ const ProductsPage = () => {
                                             }}>
                                             Edit
                                         </Button>
+                                        <Button
+                                            type="link"
+                                            danger
+                                            onClick={async () => {
+                                                // Confirm before deleting
+                                                if (window.confirm('Are you sure you want to delete this product?')) {
+                                                    try {
+                                                        await import('../../http/Api').then(({ deleteProduct }) =>
+                                                            deleteProduct(record._id)
+                                                        );
+                                                        queryClient.invalidateQueries({ queryKey: ['products'] });//It is used for updating the latest data
+                                                    } catch (err) {
+                                                        // Optionally show error
+                                                        // eslint-disable-next-line no-alert
+                                                        alert('Failed to delete product');
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
                                     </Space>
                                 );
                             },
@@ -338,7 +398,7 @@ const ProductsPage = () => {
                         <ProductForm form={form} /> allows the child component to also access and interact with the same form
                          */}
                     <Form layout="vertical" form={form}>
-                        <ProductForm form={form} />
+                        <ProductForm form={form} />{/**left side form is name of the prop and right form is all user input values*/}
                     </Form>
                 </Drawer>
 

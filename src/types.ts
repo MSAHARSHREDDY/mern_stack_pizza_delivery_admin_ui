@@ -78,26 +78,24 @@ export type Product = {
 export type ImageField = { file: File };
 export type CreateProductData = Product & { image: ImageField };
 
+export enum OrderStatus {
+    RECEIVED = 'received',
+    CONFIRMED = 'confirmed',
+    PREPARED = 'prepared',
+    OUT_FOR_DELIVERY = 'out_for_delivery',
+    DELIVERED = 'delivered',
+}
 
+export enum PaymentStatus {
+    PENDING = 'pending',
+    PAID = 'paid',
+    FAILED = 'failed',
+}
 
-// export enum OrderStatus {
-//     RECEIVED = 'received',
-//     CONFIRMED = 'confirmed',
-//     PREPARED = 'prepared',
-//     OUT_FOR_DELIVERY = 'out_for_delivery',
-//     DELIVERED = 'delivered',
-// }
-
-// export enum PaymentStatus {
-//     PENDING = 'pending',
-//     PAID = 'paid',
-//     FAILED = 'failed',
-// }
-
-// export enum PaymentMode {
-//     CARD = 'card',
-//     CASH = 'cash',
-// }
+export enum PaymentMode {
+    CARD = 'card',
+    CASH = 'cash',
+}
 
 export type Topping = {
     id: string;
@@ -121,29 +119,27 @@ export interface Customer {
     firstName: string;
     lastName: string;
 }
-// export interface Order {
-//     _id: string;
-//     image: any;
-//     cart: CartItem[];
-//     customerId: Customer;
-//     total: number;
-//     discount: number;
-//     taxes: number;
-//     deliveryCharges: number;
-//     address: string;
-//     tenantId: string;
-//     comment?: string;
-//     paymentMode: PaymentMode;
-//     orderStatus: OrderStatus;
-//     paymentStatus: PaymentStatus;
-//     paymentId?: string;
-//     createdAt: string;
-// }
+export interface Order {
+    _id: string;
+    image: any;
+    cart: CartItem[];
+    customerId: Customer;
+    total: number;
+    discount: number;
+    taxes: number;
+    deliveryCharges: number;
+    address: string;
+    tenantId: string;
+    comment?: string;
+    paymentMode: PaymentMode;
+    orderStatus: OrderStatus;
+    paymentStatus: PaymentStatus;
+    paymentId?: string;
+    createdAt: string;
+}
 
-// export enum OrderEvents {
-//     ORDER_CREATE = 'ORDER_CREATE',
-//     PAYMENT_STATUS_UPDATE = 'PAYMENT_STATUS_UPDATE',
-//     ORDER_STATUS_UPDATE = 'ORDER_STATUS_UPDATE',
-// }
-
-
+export enum OrderEvents {
+    ORDER_CREATE = 'ORDER_CREATE',
+    PAYMENT_STATUS_UPDATE = 'PAYMENT_STATUS_UPDATE',
+    ORDER_STATUS_UPDATE = 'ORDER_STATUS_UPDATE',
+}

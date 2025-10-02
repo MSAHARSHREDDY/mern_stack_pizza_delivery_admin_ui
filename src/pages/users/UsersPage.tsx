@@ -14,7 +14,7 @@ import {
 import { RightOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Link, Navigate } from 'react-router-dom';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createUser, getUsers, updateUser,  } from "../../http/Api";
+import { createUser, getUsers, updateUser, deleteUser } from "../../http/Api";
 import type { CreateUserData, FieldData, User } from '../../types';
 import { useAuthStore } from '../../Store';
 import UsersFilter from './UsersFilter';
@@ -121,12 +121,24 @@ const UsersPage = () => {
         },
     });
 
+    //It is used for updating user data
     const { mutate: updateUserMutation } = useMutation({
         mutationKey: ['update-user'],
         mutationFn: async (data: CreateUserData) =>
             updateUser(data, currentEditingUser!.id).then((res) => res.data),
         onSuccess: async () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+            queryClient.invalidateQueries({ queryKey: ['users'] });//It is used to update the user table after updating a user
+            setCurrentEditingUser(null);//once you update it clear all the values
+            return;
+        },
+    });
+
+    //It is used for deleting user data
+    const { mutate: deleteUserMutation } = useMutation({
+        mutationKey: ['delete-user'],
+        mutationFn: async (id: string) => deleteUser(id).then((res) => res.data),
+        onSuccess: async () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });//It is used to update the user table after deleting a user
             return;
         },
     });
@@ -213,6 +225,27 @@ const UsersPage = () => {
                                                 setCurrentEditingUser(record);
                                             }}>
                                             Edit
+                                        </Button>
+
+                                        <Button
+                                            type="link"
+                                            danger
+                                            onClick={async () => {
+                                                await new Promise<void>((resolve, reject) => {
+                                                    // Optional: confirm before deleting
+                                                    if (window.confirm('Are you sure you want to delete this user?')) {
+                                                        resolve();
+                                                    } else {
+                                                        reject();
+                                                    }
+                                                })
+                                                .then(() => {
+                                                    deleteUserMutation(record.id);
+                                                })
+                                                .catch(() => {});
+                                            }}
+                                        >
+                                            Delete
                                         </Button>
                                     </Space>
                                 );
